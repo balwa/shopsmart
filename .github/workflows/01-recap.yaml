@@ -17,10 +17,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Say Hello
-                run: echo "Hello ${{ github.event.inputs.name }}!"
+              run: echo "Hello ${{ github.event.inputs.name }}!"
             - name: List Files
-                run: ls -la
+              run: ls -la
             - name: Checkout
-                uses: actions/checkout@v4
+              uses: actions/checkout@v4
             - name: List Files
-                run: ls -la
+              run: ls -la
