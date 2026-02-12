@@ -2,17 +2,6 @@ name: Hello World
 
 on:
     workflow_dispatch:
-        inputs:
-            name:
-                description: "Name"
-                default: "Tanmay"
-                required: true
-            city:
-                default: "Ahmedabad"
-                required: true
-            country:
-                default: "India"
-                required: true
 
 jobs:
     hello-world:
