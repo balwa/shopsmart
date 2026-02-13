@@ -35,4 +35,4 @@ jobs:
             npm run build
             # Assuming Nginx is serving the build folder directly
             # or copy to /var/www/html
-            # cp -r dist/* /var/www/html/
+            sudo cp -r dist/* /var/www/html/
