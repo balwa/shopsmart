@@ -24,10 +24,29 @@ jobs:
             cd /home/ubuntu/shopsmart
             git pull origin main
             
-            # Install dependencies and restart backend
+            # Install PM2 globally if not already installed
+            if ! command -v pm2 &> /dev/null; then
+                sudo npm install -g pm2
+            fi
+
+            # Install dependencies
             cd server
             npm install
-            pm2 restart shopsmart-server
+
+            # Start or Restart application with PM2
+            # Check if process exists
+            if pm2 describe shopsmart-server > /dev/null; then
+                pm2 restart shopsmart-server
+            else
+                pm2 start src/index.js --name shopsmart-server
+            fi
+
+            # Save PM2 list for persistence
+            pm2 save
+            
+            # Note: For full persistence across reboots, you need to run 'pm2 startup' once manually on the server
+            # or include it here (requires sudo and might be interactive/distro specific)
+            # sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u ${{ secrets.EC2_USERNAME }} --hp /home/${{ secrets.EC2_USERNAME }}
             
             # Build frontend
             cd ../client
