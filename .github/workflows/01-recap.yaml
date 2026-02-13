@@ -2,7 +2,12 @@ name: Hello World
 
 on:
     push:
-    workflow_dispatch: 
+    workflow_dispatch:
+      inputs:
+        name:
+          description: "Name to greet"
+          required: true
+          default: "NST"
 
 jobs:
     hello-world:
