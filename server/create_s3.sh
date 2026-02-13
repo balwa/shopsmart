@@ -4,8 +4,8 @@
 # This is for demonstration/testing purposes only.
 
 # Dummy AWS Credentials (not real)
-AWS_ACCESS_KEY_ID="ASIA3SVM3JS7VKZLYIUH"
-AWS_SECRET_ACCESS_KEY="lDPTBchhVnvjpOaMfxU7vQUpDGmC4jZTwxP+Uqdh"
+AWS_ACCESS_KEY_ID="EXAMPLE"
+AWS_SECRET_ACCESS_KEY="EXAMPLE"
 AWS_DEFAULT_REGION="us-west-2"
 
 # Export for AWS CLI
