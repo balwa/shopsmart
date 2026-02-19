@@ -1,56 +1,40 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import App from './App';
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 
-describe('App', () => {
-    const realFetch = global.fetch;
+const BACKEND_URL = 'http://localhost:5001';
 
-    afterEach(() => {
-        // Restore the real fetch after every test so mocks don't leak.
-        global.fetch = realFetch;
+describe('App Integration (Real Backend)', () => {
+    const originalFetch = global.fetch;
+
+    beforeAll(() => {
+        // Redirect relative URLs to the real backend
+        global.fetch = async (input, init) => {
+            let url = input;
+            if (typeof url === 'string' && url.startsWith('/')) {
+                url = `${BACKEND_URL}${url}`;
+            }
+            console.log(`[TEST] Fetching: ${url}`);
+            return originalFetch(url, init);
+        };
     });
 
-    // Integration test — intentionally fails without a real running backend.
-    // REMOVED because ProductList now also fetches and causes "Failed to parse URL" errors in Node env.
+    afterAll(() => {
+        global.fetch = originalFetch;
+    });
 
-    it('shows loading state before fetch resolves (no mock)', () => {
-        // We need to mock fetch here too because ProductList triggers a fetch on mount
-        // and relative URLs fail in jsdom without origin
-        const mockFetch = vi.fn(() => Promise.resolve({
-            ok: true,
-            json: () => Promise.resolve([])
-        }));
-        global.fetch = mockFetch;
-
+    it('successfully connects to the backend and renders data', async () => {
         render(<App />);
+
+        // Verify "Loading..." appears initially
         expect(screen.getByText(/Loading backend status/i)).toBeInTheDocument();
-    });
 
-    it('renders ShopSmart title and products', async () => {
-        // Mock fetch to handle both health check and product search
-        global.fetch = vi.fn((url) => {
-            if (url.includes('/api/health')) {
-                return Promise.resolve({
-                    ok: true,
-                    json: () => Promise.resolve({ status: 'ok', message: 'Test Msg', timestamp: 'now' })
-                });
-            }
-            if (url.includes('/api/products/search')) {
-                return Promise.resolve({
-                    ok: true,
-                    json: () => Promise.resolve([
-                        { id: 1, name: 'Integration Test Product', price: 100, category: 'Test', inStock: true }
-                    ])
-                });
-            }
-            return Promise.reject(new Error('Unknown URL'));
-        });
-
-        render(<App />);
-
+        // Wait for the backend data to appear (indicating backend is UP)
+        // If backend is DOWN, this will timeout and FAIL the test.
         await waitFor(() => {
-            expect(screen.getByText(/ShopSmart/i)).toBeInTheDocument();
-            expect(screen.getByText(/Integration Test Product/i)).toBeInTheDocument();
-        });
+            expect(screen.getByText(/Status:/i)).toBeInTheDocument();
+            // We can also check for specific content if we know what the backend returns
+            // but availability checking is the primary goal.
+        }, { timeout: 5000 });
     });
 });
