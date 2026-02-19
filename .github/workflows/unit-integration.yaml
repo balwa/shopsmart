@@ -2,9 +2,9 @@ name: Unit & Integration Tests
 
 on:
   push:
-    branches: [ main, new-feature ]
+    branches: [ main, new-feature, bugfix ]
   pull_request:
-    branches: [ main, new-feature ]
+    branches: [ main, new-feature, bugfix ]
 
 jobs:
   test-unit-integration:
