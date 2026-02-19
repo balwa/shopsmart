@@ -1,0 +1,32 @@
+name: Unit & Integration Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-unit-integration:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+        
+    - name: Install Client Dependencies
+      run: |
+        cd client
+        npm ci
+        
+    - name: Run Client Tests
+      run: |
+        cd client
+        npm test run
