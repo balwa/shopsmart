@@ -2,9 +2,9 @@ name: Client Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, tests ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, tests ]
 
 jobs:
   test-client:
